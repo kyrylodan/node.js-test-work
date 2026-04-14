@@ -1,0 +1,10 @@
+export enum PermissionEnum {
+    CREATE_CAR = "CREATE_CAR",
+    EDIT_CAR = "EDIT_CAR",
+    VIEW_STATISTICS = "VIEW_STATISTICS",
+    BAN_USER = "BAN_USER",
+    UNBAN_USER = "UNBAN_USER",       // нове право на розбан
+    MANAGE_USERS = "MANAGE_USERS",
+    CREATE_BRAND = "CREATE_BRAND",
+    CREATE_MODEL = "CREATE_MODEL"
+}

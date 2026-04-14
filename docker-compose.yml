@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    container_name: autoria-clone-api
+    ports:
+      - "3000:3000"
+    environment:
+      APP_PORT: 3000
+      APP_HOST: localhost
+      MONGO_URI: mongodb://mongo:27017/mydatabase
+      JWT_ACCESS_SECRET: your_access_secret
+      JWT_ACCESS_EXPIRATION: 1h
+      JWT_REFRESH_SECRET: your_refresh_secret
+      JWT_REFRESH_EXPIRATION: 7d
+      SMTP_EMAIL: your_email@gmail.com
+      SMTP_PASSWORD: your_email_password
+      ADMIN_EMAIL: admin@gmail.com
+      MANAGER_EMAIL: manager@gmail.com
+      AWS_ACCESS_KEY: your_aws_access_key
+      AWS_SECRET_KEY: your_aws_secret_key
+      AWS_S3_BUCKET_NAME: your_bucket_name
+      AWS_S3_REGION: eu-central-1
+      AWS_S3_ACL: public-read
+      AWS_S3_ENDPOINT: ""
+    depends_on:
+      - mongo
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  mongo:
+    image: mongo:7
+    container_name: autoria-clone-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
