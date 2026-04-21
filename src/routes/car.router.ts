@@ -3,29 +3,40 @@ import { carController } from "../controllers/car.controller";
 import fileUpload from "express-fileupload";
 
 import {authMiddleware} from "../middlewares/auth.middleware";
-import {checkCarOwnerMiddleware} from "../middlewares/check-car-owner.middleware";
+import {permissionMiddleware} from "../middlewares/permission.middleware";
+import {PermissionEnum} from "../enums/permission.enum";
+import {commonMiddleware} from "../middlewares/common.middleware";
+import {CarValidator} from "../validator/car.validator";
 
 
 const router = Router();
 
+router.get("/", carController.getAll);
 
+router.post(
+    "/",
+    authMiddleware,
+    permissionMiddleware(PermissionEnum.CREATE_CAR),
+    commonMiddleware.isBodyValid(CarValidator.create),
+    carController.create
+);
 
-// Створити авто
-router.post("/", authMiddleware, carController.create);
+router.patch(
+    "/:carId",
+    authMiddleware,
+    permissionMiddleware(PermissionEnum.EDIT_CAR),
+    commonMiddleware.isBodyValid(CarValidator.update),
+    carController.updateCar
+);
 
-// Статистика авто
 router.get(
     "/:carId/statistics",
     authMiddleware,
+    permissionMiddleware(PermissionEnum.VIEW_STATISTICS),
     carController.getStatistics
 );
 
-// Перевірка бренду + моделі
 router.post("/check-brand-model", carController.checkBrandModel);
-
-// Оновити авто
-router.patch("/:carId", authMiddleware, checkCarOwnerMiddleware, carController.updateCar);
-
 
 // Завантаження фото (макс 5)
 router.post(

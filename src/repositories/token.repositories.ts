@@ -12,8 +12,16 @@ class TokenRepository {
         await Token.deleteMany(params);
     }
 
-    public async getByRefreshToken(refreshToken:string): Promise<IToken | void>  {
-        await Token.findOne({refreshToken})
+    public async getByRefreshToken(refreshToken:string): Promise<IToken | null>  {
+        return await Token.findOne({refreshToken})
+    }
+
+    public async deleteExpiredTokens(): Promise<number> {
+        const result = await Token.deleteMany({
+            refreshTokenExpiresAt: {$lte: new Date()},
+        });
+
+        return result.deletedCount || 0;
     }
 }
 export const tokenRepository = new TokenRepository();

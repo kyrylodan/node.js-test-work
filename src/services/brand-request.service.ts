@@ -1,24 +1,24 @@
-import {EmailTypeEnum} from "../enums/email-type.enum";
-import {emailService} from "./email.service";
-import {configs} from "../configs/config";
+import { ApiError } from "../errors/api.error";
+import { IBrand } from "../interfaces/brand.interface";
+import {brandRepository} from "../repositories/brand.repositories";
+
 
 class BrandRequestService {
-    async brandRequest(userName: string, brandName: string) {
+    public async create(dto: { name: string }): Promise<IBrand> {
+        const existingBrandRequest = await brandRepository.findByName(dto.name);
+        if (existingBrandRequest) {
+            throw new ApiError("Brand request already exists", 409);
+        }
 
-        await emailService.sendMail(
-            configs.ADMIN_EMAIL,
-            EmailTypeEnum.BRAND_REQUEST,
-            {
-                name: userName,
-                brand: brandName
-            }
-        );
-
-        return {
-            message: "Brand request sent to admin"
-        };
+        return await brandRepository.create({
+            name: dto.name,
+            models: [],
+        });
     }
 
+    public async getAll(): Promise<IBrand[]> {
+        return await brandRepository.getAll();
+    }
 }
 
 export const brandRequestService = new BrandRequestService();

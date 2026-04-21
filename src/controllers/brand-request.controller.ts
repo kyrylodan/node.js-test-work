@@ -1,22 +1,29 @@
 import {NextFunction, Request, Response} from "express";
+import { IBrand } from "../interfaces/brand.interface";
 import {brandRequestService} from "../services/brand-request.service";
 
 class BrandRequestController {
-    async createBrandRequest(req: Request, res: Response, next: NextFunction) {
+    public async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { userName, brandName } = req.body;
+            const result: IBrand[] = await brandRequestService.getAll();
+            res.status(200).json(result);
+        } catch (e) {
+            next(e);
+        }
+    }
 
-            if (!userName || !brandName) {
-                return res.status(400).json({ message: "userName and brandName are required" });
-            }
+    public async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const dto = req.body;
 
-            const result = await brandRequestService.brandRequest(userName, brandName);
+            const result = await brandRequestService.create(dto);
 
-            return res.status(200).json(result);
-        } catch (error) {
-            next(error);
+            res.status(201).json(result);
+        } catch (e) {
+            next(e);
         }
     }
 }
+
 
 export const brandRequestController = new BrandRequestController();

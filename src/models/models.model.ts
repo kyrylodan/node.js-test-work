@@ -3,7 +3,7 @@ import {IModel} from "../interfaces/model.interface";
 
 const modelSchema = new Schema<IModel>({
     name: { type: String, required: true },
-    brandId: { type: String, required: true },
+    brandId: { type: Schema.Types.ObjectId, ref: "Brand", required: true },
 
 }, { collection: "models" });
 

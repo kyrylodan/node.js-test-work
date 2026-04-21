@@ -1,27 +1,28 @@
 import { NextFunction, Request, Response } from "express";
+import { IModel } from "../interfaces/model.interface";
 import {modelRequestService} from "../services/model.service";
 
 
 class ModelRequestController {
-    async createModelRequest(req: Request, res: Response, next: NextFunction) {
+    public async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { userName, brandName, modelName } = req.body;
+            const brandId = req.query.brandId as string | undefined;
+            const result: IModel[] = await modelRequestService.getAll(brandId);
+            res.status(200).json(result);
+        } catch (e) {
+            next(e);
+        }
+    }
 
-            if (!userName || !brandName || !modelName) {
-                return res.status(400).json({
-                    message: "userName, brandName and modelName are required"
-                });
-            }
+    public async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const dto = req.body;
 
-            const result = await modelRequestService.modelRequest(
-                userName,
-                brandName,
-                modelName
-            );
+            const result = await modelRequestService.create(dto);
 
-            return res.status(200).json(result);
-        } catch (error) {
-            next(error);
+            res.status(201).json(result);
+        } catch (e) {
+            next(e);
         }
     }
 }

@@ -4,10 +4,10 @@ import {ICar} from "../interfaces/car.interface";
 
 const carSchema = new Schema(
     {
-        brand: { type: String, required: true },
-        model: { type: String, required: true },
+        brand: { type: Schema.Types.ObjectId, ref: "Brand", required: true },
+        model: { type: Schema.Types.ObjectId, ref: "Model", required: true },
 
-        originalPrice: { type: Number, required: true },
+        originalPrice: { type: Number, required: true, price: { type: Number, required: true} },
         originalCurrency: { type: String, enum: ["USD", "EUR", "UAH"], required: true },
 
         convertedPrices: {

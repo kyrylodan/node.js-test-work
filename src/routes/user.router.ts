@@ -24,33 +24,39 @@ router.patch(
     userController.updateMe
 );
 
+
 // Видалити свій акаунт
 router.delete(
     "/delete-me",
     authMiddleware,
     userController.deleteMe
 );
-router.patch(
-    "/ban",
-    authMiddleware,
-    permissionMiddleware(PermissionEnum.BAN_USER),
-    userController.banUser
-);
+
 router.post(
     "/create-manager",
     authMiddleware,
     permissionMiddleware(PermissionEnum.MANAGE_USERS),
+    commonMiddleware.isBodyValid(UserValidator.createManager),
     userController.createManager
 );
 
+
+
+router.patch(
+    "/ban",
+    authMiddleware,
+    permissionMiddleware(PermissionEnum.BAN_USER),
+    commonMiddleware.isBodyValid(UserValidator.targetUserAction),
+    userController.banUser
+);
 
 router.patch(
     "/unban",
     authMiddleware,
     permissionMiddleware(PermissionEnum.UNBAN_USER),
+    commonMiddleware.isBodyValid(UserValidator.targetUserAction),
     userController.unbanUser
 );
-
 
 
 

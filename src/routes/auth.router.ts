@@ -2,7 +2,7 @@ import {authController} from "../controllers/auth.controller";
 import {Router} from "express";
 import {commonMiddleware} from "../middlewares/common.middleware";
 import {UserValidator} from "../validator/user.validator";
-import {authMiddleware} from "../middlewares/auth.middleware";
+import {authMiddleware, refreshMiddleware} from "../middlewares/auth.middleware";
 
 const router = Router();
 
@@ -17,6 +17,7 @@ router.post("/sign-in",
 );
 router.post("/logout", authMiddleware, authController.logout);
 router.post("/logout-all", authMiddleware, authController.logoutAll);
+router.post("/refresh", refreshMiddleware, authController.refresh);
 
 
 export default router;

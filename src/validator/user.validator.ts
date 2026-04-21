@@ -24,6 +24,16 @@ export class UserValidator {
         accountType: Joi.string().valid("basic").optional()
     });
 
+    public static createManager = joi.object({
+        name: this.name.required(),
+        age: this.age.required(),
+        email: this.email.required(),
+        password: this.password.required(),
+    });
+    public static targetUserAction = joi.object({
+        targetUserId: joi.string().required(),
+    });
+
     public static update = joi.object({
         name: this.name,
         age: this.age,

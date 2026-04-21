@@ -2,10 +2,11 @@ import {NextFunction, Request, Response} from "express";
 import {IUser} from "../interfaces/user.interface";
 import {userService} from "../services/user.service";
 
+type CreateManagerDto = Pick<IUser, "name" | "age" | "email" | "password">;
 
 class UserController {
 
-    public async create(req: Request, res: Response, next: NextFunction) {
+    public async create(req: Request, res: Response, next: NextFunction): Promise<void> {
         try{
             const user = await userService.create(req.body);
             res.status(201).json(user);
@@ -17,7 +18,7 @@ class UserController {
         req: Request<{ userId: string }>,
         res: Response,
         next: NextFunction
-    ) {
+    ): Promise<void> {
         try {
             const userId = res.locals.userId;
             const dto = req.body as Partial<IUser>;
@@ -27,7 +28,7 @@ class UserController {
             next(e);
         }
     }
-    public async getMe(req: Request, res: Response, next: NextFunction) {
+    public async getMe(req: Request, res: Response, next: NextFunction): Promise<void> {
         try{
             const userId = res.locals.userId;
             const result = await userService.getMe(userId);
@@ -37,7 +38,7 @@ class UserController {
         }
     }
 
-    public async deleteMe(req: Request, res: Response, next: NextFunction) {
+    public async deleteMe(req: Request, res: Response, next: NextFunction): Promise<void> {
         try{
             const userId = res.locals.userId;
             await userService.deleteMe(userId);
@@ -46,34 +47,31 @@ class UserController {
             next(e);
         }
     }
-    public async createManager(req: Request, res: Response, next: NextFunction) {
+    public async createManager(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const adminId = res.locals.userId;
-            const dto = req.body as Partial<IUser>;
+            const dto = req.body as CreateManagerDto;
 
-            const result = await userService.createManager(adminId, dto);
+            const result = await userService.createManager(dto);
 
             res.status(201).json(result);
         } catch (e) {
             next(e);
         }
     }
-
-    public async banUser(req: Request, res: Response) {
+    public async banUser(req: Request, res: Response): Promise<void> {
         const { targetUserId } = req.body;
-        const userId = res.locals.userId;
 
-        const result = await userService.banUser(targetUserId, userId);
-        return res.json({ success: true, user: result });
+        const result = await userService.banUser(targetUserId);
+        res.json({ success: true, user: result });
     }
 
-    public async unbanUser(req: Request, res: Response) {
+    public async unbanUser(req: Request, res: Response): Promise<void> {
         const { targetUserId } = req.body;
-        const userId = res.locals.userId;
 
-        const result = await userService.unbanUser(targetUserId, userId);
-        return res.json({ success: true, user: result });
+        const result = await userService.unbanUser(targetUserId);
+        res.json({ success: true, user: result });
     }
+
 
 
 }

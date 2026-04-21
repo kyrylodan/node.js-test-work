@@ -1,12 +1,13 @@
 import { CarStatusEnum } from "../enums/car-status.enum";
+import { Types } from "mongoose";
 
 export interface ICar {
     id: string;
     _userId: string;
     brandId:string;
     modelId:string;
-    brand: string;
-    model: string;
+    brand: string | Types.ObjectId;
+    model: string | Types.ObjectId;
 
     convertedPrices: {
         usd: number;

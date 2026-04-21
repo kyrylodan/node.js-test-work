@@ -4,6 +4,7 @@ export interface IToken {
     refreshToken: string;
     _userId: string;
     role: string;
+    refreshTokenExpiresAt?: Date;
 }
 export interface ITokenPayload {
     userId: string;

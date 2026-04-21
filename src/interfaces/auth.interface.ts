@@ -4,5 +4,8 @@ export interface ISignIn {
 }
 
 export interface ISignUp extends ISignIn {
-    name?: string;
+    name: string;
+    age: number;
+    role?: string;
+    accountType?: "basic" | "premium";
 }

@@ -1,10 +1,6 @@
 import dotenv from "dotenv";
 import {ObjectCannedACL} from "@aws-sdk/client-s3";
 dotenv.config();
-export const awsConfig = {
-    accessKey: process.env.AWS_ACCESS_KEY!,
-    secretKey: process.env.AWS_SECRET_KEY!
-};
 export const configs = {
     APP_PORT: Number(process.env.APP_PORT) || 3000,
     APP_HOST: process.env.APP_HOST || "localhost",

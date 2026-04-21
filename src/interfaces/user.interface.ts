@@ -1,4 +1,4 @@
-import type {UserRoleEnum} from "../enums/user-role.enum";
+import type { IRole } from "./role.interface";
 
 export interface IUser {
     name:string;
@@ -9,8 +9,7 @@ export interface IUser {
     isVerified: boolean;
     isDeleted: boolean;
     accountType?: "basic" | "premium";
-    role: UserRoleEnum;
-    permissions: string[];
+    role: IRole | string;
     banned: boolean;
 
 }

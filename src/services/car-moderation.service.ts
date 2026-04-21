@@ -20,6 +20,8 @@ class CarModerationService {
         }
 
         await car.save();
+
+        return car;
     }
 }
 
