@@ -7,6 +7,7 @@ import {permissionMiddleware} from "../middlewares/permission.middleware";
 import {PermissionEnum} from "../enums/permission.enum";
 import {commonMiddleware} from "../middlewares/common.middleware";
 import {CarValidator} from "../validator/car.validator";
+import {checkCarOwnerMiddleware} from "../middlewares/check-car-owner.middleware";
 
 
 const router = Router();
@@ -25,9 +26,11 @@ router.patch(
     "/:carId",
     authMiddleware,
     permissionMiddleware(PermissionEnum.EDIT_CAR),
+    checkCarOwnerMiddleware,
     commonMiddleware.isBodyValid(CarValidator.update),
     carController.updateCar
 );
+
 
 router.get(
     "/:carId/statistics",

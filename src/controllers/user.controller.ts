@@ -58,18 +58,27 @@ class UserController {
             next(e);
         }
     }
-    public async banUser(req: Request, res: Response): Promise<void> {
-        const { targetUserId } = req.body;
+    public async banUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try{
 
-        const result = await userService.banUser(targetUserId);
-        res.json({ success: true, user: result });
+            const { targetUserId } = req.body;
+
+            const result = await userService.banUser(targetUserId);
+            res.json({ success: true, user: result });
+        }catch (e) {
+            next(e);
+        }
     }
 
-    public async unbanUser(req: Request, res: Response): Promise<void> {
-        const { targetUserId } = req.body;
+    public async unbanUser(req: Request, res: Response,next: NextFunction): Promise<void> {
+        try{
+            const { targetUserId } = req.body;
 
-        const result = await userService.unbanUser(targetUserId);
-        res.json({ success: true, user: result });
+            const result = await userService.unbanUser(targetUserId);
+            res.json({ success: true, user: result });
+        }catch (e) {
+            next(e);
+        }
     }
 
 
