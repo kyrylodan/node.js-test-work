@@ -4,13 +4,13 @@ Backend API for an AutoRia-style car marketplace built with `Node.js`, `Express`
 
 ## Features
 
-- Authentication: sign up, sign in, logout, logout all
+- Authentication: sign up, sign in, logout, logout all, refresh token
 - Roles: `buyer`, `seller`, `manager`, `admin`
 - Account types: `basic`, `premium`
 - Car ads: create, update, view, upload photos, delete photos
-- Premium statistics for car ads
-- Brand request and model request flows
-- Premium mock purchase flow
+- Premium statistics for your own car ads
+- Brand and model directories plus request flows
+- Daily currency conversion update
 - AWS S3 photo upload
 - Email notifications with Handlebars templates
 
@@ -41,6 +41,7 @@ src/
   routes/
   services/
   templates/
+  utils/
   validator/
 index.ts
 ```
@@ -63,6 +64,8 @@ SMTP_EMAIL=your_email@gmail.com
 SMTP_PASSWORD=your_email_password
 ADMIN_EMAIL=admin@gmail.com
 MANAGER_EMAIL=manager@gmail.com
+
+PREMIUM_PAYMENT_SECRET=your_payment_secret
 
 AWS_ACCESS_KEY=your_aws_access_key
 AWS_SECRET_KEY=your_aws_secret_key
@@ -120,6 +123,7 @@ mongodb://localhost:27017/mydatabase
 - `POST /api/auth/sign-in`
 - `POST /api/auth/logout`
 - `POST /api/auth/logout-all`
+- `POST /api/auth/refresh`
 
 ### Users
 
@@ -138,8 +142,16 @@ Body example:
 
 ```json
 {
-  "paymentStatus": "success"
+  "paymentStatus": "success",
+  "paymentReference": "order-123",
+  "paymentSignature": "sha256_hmac_signature"
 }
+```
+
+Signature source:
+
+```text
+HMAC_SHA256(userId:paymentReference:paymentStatus, PREMIUM_PAYMENT_SECRET)
 ```
 
 ### Cars
@@ -153,10 +165,24 @@ Body example:
 - `POST /api/cars/check-brand-model`
 - `POST /api/cars/update-prices-daily`
 
-### Brand and Model Requests
+### Brands and Models
 
-- `POST /api/brand-request/brand-request`
-- `POST /api/model-request/model-request`
+- `GET /api/brands`
+- `GET /api/models`
+- `GET /api/models?brandId=:brandId`
+- `POST /api/brand-request`
+- `POST /api/model-request`
+
+## Typical Flow
+
+1. `POST /api/auth/sign-up`
+2. `POST /api/auth/sign-in`
+3. `POST /api/brand-request`
+4. `GET /api/brands`
+5. `POST /api/model-request`
+6. `GET /api/models?brandId=:brandId`
+7. `POST /api/cars`
+8. `GET /api/cars/:carId/statistics`
 
 ## Photo Upload
 
@@ -173,7 +199,7 @@ photos
 Use the file:
 
 ```text
-autor ia-clone.postman_collection.json
+autoria-clone.postman_collection.json
 ```
 
 Import it into Postman and set:
@@ -181,12 +207,17 @@ Import it into Postman and set:
 - `baseUrl`
 - `token`
 - `carId`
+- `brandId`
+- `modelId`
 - `photoUrl`
+- `premiumPaymentSecret`
+
+The `Buy Premium` request in the collection generates `paymentSignature` automatically in a pre-request script.
 
 ## Notes
 
-- Premium statistics are available only for premium sellers
+- Premium statistics are available only for premium sellers and only for their own cars
 - Basic sellers can create only one car
-- Premium activation is mocked through `paymentStatus=success`
-- Daily currency update endpoint exists and can also be called manually
-- Brand/model requests notify admin by email
+- `POST /api/cars/update-prices-daily` now requires permission and should not be called by a regular seller token
+- Brand and model requests create records that can be used right away in the current project flow
+- If you use Docker, the app binds to `0.0.0.0` so the mapped port is reachable from the host

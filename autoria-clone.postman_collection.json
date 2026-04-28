@@ -19,7 +19,31 @@
       "value": ""
     },
     {
+      "key": "brandId",
+      "value": ""
+    },
+    {
+      "key": "modelId",
+      "value": ""
+    },
+    {
       "key": "photoUrl",
+      "value": ""
+    },
+    {
+      "key": "targetUserId",
+      "value": ""
+    },
+    {
+      "key": "premiumPaymentSecret",
+      "value": "your_payment_secret"
+    },
+    {
+      "key": "paymentReference",
+      "value": "order-123"
+    },
+    {
+      "key": "paymentSignature",
       "value": ""
     }
   ],
@@ -79,6 +103,19 @@
           }
         },
         {
+          "name": "Refresh",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/refresh"
+          }
+        },
+        {
           "name": "Logout",
           "request": {
             "method": "POST",
@@ -111,6 +148,27 @@
       "item": [
         {
           "name": "Buy Premium",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const userId = pm.collectionVariables.get(\"targetUserId\") || pm.variables.get(\"targetUserId\") || \"\";",
+                  "const paymentReference = pm.collectionVariables.get(\"paymentReference\") || \"order-123\";",
+                  "const paymentStatus = \"success\";",
+                  "const secret = pm.collectionVariables.get(\"premiumPaymentSecret\") || \"\";",
+                  "if (!userId || !secret) {",
+                  "  console.log(\"Set targetUserId and premiumPaymentSecret before calling Buy Premium\");",
+                  "} else {",
+                  "  const payload = `${userId}:${paymentReference}:${paymentStatus}`;",
+                  "  const signature = CryptoJS.HmacSHA256(payload, secret).toString(CryptoJS.enc.Hex);",
+                  "  pm.collectionVariables.set(\"paymentSignature\", signature);",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -125,7 +183,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"paymentStatus\": \"success\"\n}"
+              "raw": "{\n  \"paymentStatus\": \"success\",\n  \"paymentReference\": \"{{paymentReference}}\",\n  \"paymentSignature\": \"{{paymentSignature}}\"\n}"
             },
             "url": "{{baseUrl}}/api/account/buy-premium"
           }
@@ -198,7 +256,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"targetUserId\": \"PUT_USER_ID_HERE\"\n}"
+              "raw": "{\n  \"targetUserId\": \"{{targetUserId}}\"\n}"
             },
             "url": "{{baseUrl}}/api/users/ban"
           }
@@ -219,7 +277,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"targetUserId\": \"PUT_USER_ID_HERE\"\n}"
+              "raw": "{\n  \"targetUserId\": \"{{targetUserId}}\"\n}"
             },
             "url": "{{baseUrl}}/api/users/unban"
           }
@@ -248,6 +306,67 @@
       ]
     },
     {
+      "name": "Brands and Models",
+      "item": [
+        {
+          "name": "Get Brands",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/brands"
+          }
+        },
+        {
+          "name": "Brand Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"BMW\"\n}"
+            },
+            "url": "{{baseUrl}}/api/brand-request"
+          }
+        },
+        {
+          "name": "Get Models",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/models?brandId={{brandId}}"
+          }
+        },
+        {
+          "name": "Model Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"X5\",\n  \"brandId\": \"{{brandId}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/model-request"
+          }
+        }
+      ]
+    },
+    {
       "name": "Cars",
       "item": [
         {
@@ -266,7 +385,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"brandId\": \"PUT_BRAND_ID_HERE\",\n  \"modelId\": \"PUT_MODEL_ID_HERE\",\n  \"originalPrice\": 15000,\n  \"originalCurrency\": \"USD\",\n  \"title\": \"BMW X5 2018\",\n  \"description\": \"BMW X5 in good condition\",\n  \"region\": \"Kyiv\"\n}"
+              "raw": "{\n  \"brandId\": \"{{brandId}}\",\n  \"modelId\": \"{{modelId}}\",\n  \"originalPrice\": 15000,\n  \"originalCurrency\": \"USD\",\n  \"title\": \"BMW X5 2018\",\n  \"description\": \"BMW X5 in good condition\",\n  \"region\": \"Kyiv\"\n}"
             },
             "url": "{{baseUrl}}/api/cars"
           }
@@ -324,7 +443,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"brand\": \"PUT_BRAND_ID_HERE\",\n  \"model\": \"PUT_MODEL_ID_HERE\"\n}"
+              "raw": "{\n  \"brand\": \"{{brandId}}\",\n  \"model\": \"{{modelId}}\"\n}"
             },
             "url": "{{baseUrl}}/api/cars/check-brand-model"
           }
@@ -384,45 +503,6 @@
               }
             ],
             "url": "{{baseUrl}}/api/cars/update-prices-daily"
-          }
-        }
-      ]
-    },
-    {
-      "name": "Requests",
-      "item": [
-        {
-          "name": "Brand Request",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"userName\": \"Andrii\",\n  \"brandName\": \"BMW\"\n}"
-            },
-            "url": "{{baseUrl}}/api/brand-request/brand-request"
-          }
-        },
-        {
-          "name": "Model Request",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"userName\": \"Andrii\",\n  \"brandName\": \"BMW\",\n  \"modelName\": \"M5 CS\"\n}"
-            },
-            "url": "{{baseUrl}}/api/model-request/model-request"
           }
         }
       ]
