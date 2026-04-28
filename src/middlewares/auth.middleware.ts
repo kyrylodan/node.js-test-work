@@ -33,6 +33,8 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
         const user = await userRepository.getById(userId);
         if (!user) throw new ApiError("User not found", 401);
+        if (user.banned) throw new ApiError("User is banned", 403);
+        if (user.isDeleted) throw new ApiError("User is deleted", 403);
 
         res.locals.userId = userId;
         res.locals.role = getRoleName(user);
@@ -65,6 +67,8 @@ export const refreshMiddleware = async (req: Request, res: Response, next: NextF
 
         const user = await userRepository.getById(payload.userId);
         if (!user) throw new ApiError("User not found", 401);
+        if (user.banned) throw new ApiError("User is banned", 403);
+        if (user.isDeleted) throw new ApiError("User is deleted", 403);
 
         res.locals.userId = payload.userId;
         res.locals.role = getRoleName(user);

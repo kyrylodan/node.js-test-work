@@ -2,6 +2,7 @@ export enum PermissionEnum {
     CREATE_CAR = "CREATE_CAR",
     EDIT_CAR = "EDIT_CAR",
     VIEW_STATISTICS = "VIEW_STATISTICS",
+    UPDATE_PRICES = "UPDATE_PRICES",
     BAN_USER = "BAN_USER",
     UNBAN_USER = "UNBAN_USER",       // нове право на розбан
     MANAGE_USERS = "MANAGE_USERS",

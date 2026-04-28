@@ -62,6 +62,12 @@ class AuthService {
         if(!user){
             throw new ApiError('User not found',404)
         }
+        if (user.banned) {
+            throw new ApiError("User is banned", 403)
+        }
+        if (user.isDeleted) {
+            throw new ApiError("User is deleted", 403)
+        }
         const isPasswordCorrect = await passwordService.comparePassword(dto.password,user.password)
         if(!isPasswordCorrect){
             throw new ApiError('Password is incorrect',401)
@@ -116,6 +122,12 @@ class AuthService {
         const user = await userRepository.getById(payload.userId);
         if (!user) {
             throw new ApiError("User not found", 404);
+        }
+        if (user.banned) {
+            throw new ApiError("User is banned", 403);
+        }
+        if (user.isDeleted) {
+            throw new ApiError("User is deleted", 403);
         }
 
         await tokenRepository.deleteByParams({ refreshToken } as any);

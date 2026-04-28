@@ -1,20 +1,20 @@
 import { Router } from "express";
+
 import {modelRequestController} from "../controllers/model-request.controller";
-import {commonMiddleware} from "../middlewares/common.middleware";
 import {authMiddleware} from "../middlewares/auth.middleware";
+import {commonMiddleware} from "../middlewares/common.middleware";
 import {ModelRequestValidator} from "../validator/model-request.validator";
 
+const modelRouter = Router();
+const modelRequestRouter = Router();
 
-const router = Router();
-router.get("/", modelRequestController.getAll);
+modelRouter.get("/", modelRequestController.getAll);
 
-router.post(
+modelRequestRouter.post(
     "/",
     authMiddleware,
     commonMiddleware.isBodyValid(ModelRequestValidator.create),
     modelRequestController.create
 );
 
-
-export const modelRouter = router;
-export const modelRequestRouter = router;
+export { modelRouter, modelRequestRouter };

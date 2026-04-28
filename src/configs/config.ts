@@ -17,6 +17,7 @@ export const configs = {
     ADMIN_EMAIL: process.env.ADMIN_EMAIL || "",
     SMTP_EMAIL:process.env.SMTP_EMAIL as string,
     MANAGER_EMAIL: process.env.MANAGER_EMAIL as string,
+    PREMIUM_PAYMENT_SECRET: process.env.PREMIUM_PAYMENT_SECRET as string | undefined,
     AWS_ACCESS_KEY:process.env.AWS_ACCESS_KEY,
     AWS_SECRET_KEY:process.env.AWS_SECRET_KEY,
     AWS_S3_BUCKET_NAME:process.env.AWS_S3_BUCKET_NAME,

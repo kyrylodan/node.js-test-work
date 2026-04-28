@@ -36,6 +36,7 @@ router.get(
     "/:carId/statistics",
     authMiddleware,
     permissionMiddleware(PermissionEnum.VIEW_STATISTICS),
+    checkCarOwnerMiddleware,
     carController.getStatistics
 );
 
@@ -62,5 +63,10 @@ router.get("/:carId", carController.getById);
 // Видалення фото
 router.delete("/:carId/photos",authMiddleware, carController.deletePhoto);
 
-router.post("/update-prices-daily", authMiddleware, carController.updatePricesDaily);
+router.post(
+    "/update-prices-daily",
+    authMiddleware,
+    permissionMiddleware(PermissionEnum.UPDATE_PRICES),
+    carController.updatePricesDaily
+);
 export default router;
