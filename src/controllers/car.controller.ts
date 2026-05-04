@@ -3,7 +3,8 @@ import { UploadedFile } from "express-fileupload";
 import {carService} from "../services/car.service";
 import { ICarListQuery } from "../interfaces/car-list.interface";
 import { ICar } from "../interfaces/car.interface";
-import { IPaginatedResponse } from "../interfaces/pagination.interface";
+import {IPaginatedResponse} from "../interfaces/pagination.interface";
+
 
 class CarController {
     public async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
